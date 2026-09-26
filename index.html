@@ -32,19 +32,19 @@
   <section class="stage" id="stage-targets" aria-labelledby="targets-title">
     <h2 class="visually-hidden" id="targets-title">Choose target muscles</h2>
 
-    <div class="targets">
-      <div class="anatomy-stage">
-        <div class="anatomy" id="anatomy"></div>
-        <p class="anatomy-caption" id="anatomy-caption" aria-live="polite"></p>
-      </div>
+    <!-- The body's stage. The page talks to AnatomyStage; the renderer it
+         mounts into the viewport draws everything inside it. -->
+    <div class="anatomy-stage" id="anatomy-stage">
+      <div class="anatomy-viewport" data-anatomy-mount></div>
+      <p class="anatomy-caption" id="anatomy-caption" aria-live="polite"></p>
+    </div>
 
-      <div class="targets-side">
-        <div class="side-card">
-          <h2>Recommended programs</h2>
-          <div id="programs"></div>
-        </div>
-        <div class="side-card" id="selection-summary"></div>
+    <div class="targets-panel">
+      <div class="panel-section">
+        <h2>Recommended programs</h2>
+        <div id="programs"></div>
       </div>
+      <div class="panel-section" id="selection-summary"></div>
     </div>
 
     <section class="estimate" id="estimate" aria-live="polite"></section>
@@ -248,6 +248,7 @@
 <script src="js/routine.js"></script>
 <script src="js/scheduler.js"></script>
 <script src="js/anatomy.js"></script>
+<script src="js/anatomy-stage.js"></script>
 <script src="js/render.js"></script>
 <script src="js/targets.js"></script>
 <script src="js/workout-view.js"></script>
