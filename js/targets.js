@@ -2,7 +2,7 @@
    Targets stage — pick the muscles to train.
 
    Four views of one MuscleSelection (routine.selection):
-     • the anatomy figure     click a muscle to toggle it
+     • the anatomy stage      click a muscle to toggle it
      • the program list       apply a recommended selection in one click
      • the summary            what is selected, and where it came from
      • the estimate           what training those muscles will take
@@ -33,7 +33,7 @@ function paintCaption() {
     (selection.has(m.id) ? "selected — click to remove" : "click to add") + '</span>';
 }
 
-const figure = new AnatomyFigure($("anatomy"), selection, {
+const stage = new AnatomyStage($("anatomy-stage"), selection, {
   onHover(muscle) { pointedAt = muscle; paintCaption(); }
 });
 
@@ -82,7 +82,7 @@ function buildPrograms() {
 
 /** Shows why a program groups what it does, while it is pointed at. */
 function previewProgram(program) {
-  figure.preview(program ? program.muscles : null);
+  stage.preview(program ? program.muscles : null);
   const why = $("prog-why");
   if (program) {
     why.innerHTML = '<b>' + esc(program.name) + ':</b> ' + esc(program.why);

@@ -670,25 +670,38 @@ table.meals .food { color: var(--ink-soft); font-variant-numeric: normal; }
 
 /* ------------------------------ targets ---------------------------------- */
 
-/* No cards here: the body owns the space, and the side column is a quiet
-   run of sections divided by hairlines. */
-.targets {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
-  gap: clamp(24px, 5vw, 88px); align-items: start;
-}
-.targets-side { display: grid; }
-.side-card + .side-card { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 28px; }
-
-/* Room for the figure to become the centrepiece: most of the viewport's
-   height, centred in the space the side column leaves. */
+/* The anatomy stage: the body's room. Centred, frameless, on the page's own
+   ground, and most of the first screen. It sets one size, --stage-h: the
+   screen's height less the masthead, or the height two figures side by
+   side reach at the page's width, whichever is smaller, so a phone gets a
+   smaller room rather than empty space around the body. `isolation`
+   keeps anything layered in it later (a backdrop, a blur, labels)
+   stacking inside it. */
 .anatomy-stage {
-  min-height: min(calc(100vh - 190px), 860px);
-  display: grid; align-content: start;
+  --stage-h: clamp(260px, min(100svh - 180px, (100vw - 2 * var(--space)) * 1.1 + 64px), 1200px);
+  position: relative; isolation: isolate;
+  height: var(--stage-h);
+  display: grid; grid-template-rows: minmax(0, 1fr) auto;
 }
-.anatomy { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(8px, 3vw, 48px);
-           width: 100%; max-width: 820px; margin: 0 auto; }
+/* Where the renderer is mounted. It is a size container, so what is drawn
+   in it sizes to this box (cqw, cqh), never to the window: the stage can
+   change size, or a different renderer move in, without either knowing
+   about the other. */
+.anatomy-viewport {
+  container-type: size; min-height: 0;
+  display: grid; place-items: center;
+}
+
+/* The SVG figure: two views side by side, as large as the viewport allows.
+   Each view is 200 × 440, so a pair is (height ÷ 2.2) × 2 ≈ .91 × height
+   wide plus the gap; 30px is left under each for its caption. */
+.anatomy {
+  --fig-gap: clamp(8px, 3cqw, 48px);
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--fig-gap);
+  width: min(100%, (100cqh - 30px) * .91 + var(--fig-gap));
+}
 .anatomy-view { margin: 0; text-align: center; }
-.anatomy-view svg { width: 100%; max-height: min(calc(100vh - 260px), 760px); display: block;
+.anatomy-view svg { width: 100%; max-height: calc(100cqh - 30px); display: block;
                     margin: 0 auto; overflow: visible;
                     touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .anatomy-view figcaption {
@@ -721,8 +734,20 @@ table.meals .food { color: var(--ink-soft); font-variant-numeric: normal; }
 .anatomy-caption {
   display: flex; align-items: center; justify-content: center; gap: 7px;
   margin: 20px 0 0; min-height: 1.6em; font: var(--t-meta); color: var(--ink-faint);
+  text-align: center;
 }
 .anatomy-caption.live { color: var(--ink); }
+
+/* Everything else on the stage sits below the body, at a readable measure:
+   programs and the summary side by side, then the estimate. */
+.targets-panel, #stage-targets .estimate, #stage-targets .stage-actions {
+  max-width: 1240px; margin-inline: auto;
+}
+.targets-panel {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px clamp(32px, 5vw, 88px); align-items: start;
+  margin-top: clamp(32px, 6vh, 64px); padding-top: 32px; border-top: 1px solid var(--line);
+}
 
 /* programs */
 .prog-group {
@@ -789,22 +814,19 @@ table.meals .food { color: var(--ink-soft); font-variant-numeric: normal; }
 }
 .caveat b { color: var(--ink); }
 
-/* Two columns only where the figure keeps its size beside the side column. */
-@media (max-width: 1024px) {
-  .targets { grid-template-columns: 1fr; }
-  .anatomy-stage { min-height: 0; }
-}
 @media (max-width: 900px) {
   .layout { grid-template-columns: minmax(0, 1fr); }
   aside.card { position: static; }
-  .targets { grid-template-columns: 1fr; }
-  .anatomy-stage { min-height: 0; }
+  .targets-panel { grid-template-columns: minmax(0, 1fr); }
+  .panel-section + .panel-section { border-top: 1px solid var(--line); padding-top: 28px; }
   .nutrition { grid-template-columns: minmax(0, 1fr); }
   .nplan { position: static; }
-  .anatomy-view svg { max-height: min(62vh, 520px); }
 }
 @media (max-width: 620px) {
   body { padding: 0 16px 48px; }
+  /* Room for a caption that wraps, so the figure above it keeps its size
+     whichever caption is showing. */
+  .anatomy-caption { min-height: calc(2 * 1.45em); }
   .masthead { padding-top: 18px; }
   .theme-btn { top: 12px; }
   .phases { grid-template-columns: 1fr; }

@@ -119,7 +119,7 @@ const SVG_NS = "http://www.w3.org/2000/svg";
 const MIRROR = "matrix(-1 0 0 1 200 0)";
 
 /**
- * Renders the views into `container` and keeps them in step with a
+ * Renders the views into `mount` and keeps them in step with a
  * MuscleSelection. The figure never changes the selection's rules; it only
  * calls `selection.toggle()`.
  *
@@ -127,8 +127,12 @@ const MIRROR = "matrix(-1 0 0 1 200 0)";
  *                      focused, and with null when it is left
  */
 class AnatomyFigure {
-  constructor(container, selection, opts = {}) {
-    this.container = container;
+  constructor(mount, selection, opts = {}) {
+    // The figure draws into a root of its own inside `mount`, so the stage
+    // holding it keeps its own box and styles.
+    this.container = document.createElement("div");
+    this.container.className = "anatomy";
+    mount.replaceChildren(this.container);
     this.selection = selection;
     this.onHover = opts.onHover || (() => {});
     this.groups = new Map();          // muscle id → [<g>, …] across the views
